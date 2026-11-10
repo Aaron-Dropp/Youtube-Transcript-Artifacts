@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 May Prompting Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<script>
+  try { var t = localStorage.getItem('pp-theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+</script>
+<style>
+  :root {
+    --bg: #f0eee6;
+    --text: #1d1b19;
+    --muted: #625d57;
+    --rule: #dcd8ce;
+    --accent: #d97757;
+    --accent-ink: #d97757;
+    --accent-tint: #f7e6dd;
+    --accent-border: #e8c3b2;
+    --open-bg: #e6e4de;
+    --open-border: #cfccc4;
+    --table-head: #e8e5de;
+    --code-bg: #e4e1d9;
+    --card: #faf9f5;
+    --bar-ref: #c4c1b9;
+    --serif: "Anthropic Serif", "Tiempos Text", "Source Serif 4", Georgia, serif;
+    --sans: "Anthropic Sans", "Styrene B", "Inter", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Anthropic Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  :root[data-theme="dark"] {
+      --bg: #161514;
+      --text: #ece8e3;
+      --muted: #a29b94;
+      --rule: #2e2c2a;
+      --accent: #d97757;
+      --accent-ink: #d97757;
+      --accent-tint: #2a1e19;
+      --accent-border: #5c3a2c;
+      --open-bg: #222120;
+      --open-border: #3a3836;
+      --table-head: #1f1e1c;
+      --code-bg: #262422;
+      --card: #1f1e1c;
+      --bar-ref: #6e6c66;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #161514;
+      --text: #ece8e3;
+      --muted: #a29b94;
+      --rule: #2e2c2a;
+      --accent: #d97757;
+      --accent-ink: #d97757;
+      --accent-tint: #2a1e19;
+      --accent-border: #5c3a2c;
+      --open-bg: #222120;
+      --open-border: #3a3836;
+      --table-head: #1f1e1c;
+      --code-bg: #262422;
+      --card: #1f1e1c;
+      --bar-ref: #6e6c66;
+    }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  :root[data-theme="light"] { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 5rem;
+  }
+  a { color: var(--accent-ink); text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  /* Header */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.9rem;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 1.25rem;
+  }
+  h1 .n { color: var(--accent); }
+  .lead p { margin: 0 0 0.8rem; font-size: 1.2rem; }
+  .meta {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 1rem 0 0;
+  }
+
+
+  /* Title row + theme toggle */
+  .title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .title-row h1 { flex: 1; }
+  .theme-toggle {
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-top: 0.05rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .theme-toggle:hover { background: var(--open-bg); border-color: var(--open-border); }
+  .theme-toggle svg { width: 1.9rem; height: 1.9rem; transition: transform 0.35s ease; }
+  :root[data-theme="dark"] .theme-toggle svg { transform: rotate(30deg); }
+  @media (prefers-reduced-motion: reduce) { .theme-toggle svg { transition: none; } }
+
+  /* Toolbar */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2.25rem 0 1.5rem;
+    padding: 0.75rem 0;
+    background: var(--bg);
+  }
+  .toolbar button {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text);
+    background: transparent;
+    border: 1px solid var(--open-border);
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+  }
+  .toolbar button:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .counter {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  /* Group headings */
+  h2.group {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    margin: 2.75rem 0 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 2px solid var(--text);
+  }
+  h2.group .range {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+    letter-spacing: 0.06em;
+  }
+
+  /* Takeaways */
+  details.idea { margin: 0.35rem 0; scroll-margin-top: 4.5rem; }
+  details.idea > summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 2.4rem 1fr 1.5rem;
+    gap: 0.5rem;
+    align-items: start;
+    padding: 0.9rem 0.9rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+  }
+  details.idea > summary::-webkit-details-marker { display: none; }
+  details.idea > summary:hover { background: var(--open-bg); }
+  details.idea[open] > summary {
+    background: var(--open-bg);
+    border-color: var(--open-border);
+  }
+  .num {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.35rem;
+    line-height: 1.3;
+    color: var(--accent);
+  }
+  .sum-lead {
+    margin: 0;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.08rem;
+    line-height: 1.35;
+  }
+  .sum-text { margin: 0.3rem 0 0; }
+  .hint {
+    margin: 0.4rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .chev {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.2rem;
+    color: var(--muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  details[open] > summary .chev { transform: rotate(180deg); color: var(--accent); }
+  @media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+
+  .body { padding: 0.5rem 0.9rem 1.5rem 3.8rem; }
+  .body h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    margin: 0.75rem 0 0.75rem;
+  }
+  .ts {
+    display: inline-block;
+    margin: -0.35rem 0 0.9rem;
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: var(--accent-ink);
+  }
+  .body p { margin: 0 0 0.85rem; }
+  .body ul, .body ol { margin: 0 0 0.9rem; padding-left: 1.3rem; }
+  .body li { margin: 0.2rem 0; }
+  .body li::marker { color: var(--accent); font-family: var(--sans); font-weight: 700; }
+  blockquote {
+    margin: 1rem 0 1rem 1rem;
+    padding: 0.15rem 0 0.15rem 1rem;
+    border-left: 3px solid var(--accent);
+    font-style: italic;
+  }
+  blockquote p { margin: 0 0 0.3rem; }
+  blockquote cite {
+    display: block;
+    font-style: normal;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .table-wrap { overflow-x: auto; margin: 1rem 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+  th, td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  th {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 0.8rem;
+    background: var(--table-head);
+  }
+  .todo {
+    margin: 1.1rem 0 0.25rem;
+    padding: 0.85rem 1rem;
+    background: var(--accent-tint);
+    border: 1px solid var(--accent-border);
+    border-radius: 10px;
+  }
+  .todo .label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  .todo p { margin: 0; }
+
+
+  /* Figures */
+  .fig { margin: 1.25rem 0 1.1rem; }
+  .fig svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .fig text { font-family: var(--sans); font-size: 15px; font-weight: 600; fill: var(--text); }
+  .fig text.sm { font-size: 13px; font-weight: 400; fill: var(--muted); }
+  .fig text.mono { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+  .fig text.lab { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; fill: var(--muted); }
+  .fig .b-plain { fill: var(--card); stroke: var(--open-border); stroke-width: 1.5; }
+  .fig .b-acc { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.5; }
+  .fig .b-mute { fill: none; stroke: var(--open-border); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .fig .ln { stroke: var(--muted); stroke-width: 1.5; fill: none; }
+  .fig .ln-acc { stroke: var(--accent); stroke-width: 2; fill: none; }
+  .fig .post { stroke: var(--text); stroke-width: 2; }
+  .fig .axis { stroke: var(--open-border); stroke-width: 2; }
+  .fig .grid { stroke: var(--rule); stroke-width: 1; }
+  .fig .tl { fill: var(--open-border); }
+  .fig .fill-acc { fill: var(--accent); }
+  .fig .fill-ink { fill: var(--text); }
+  .fig .bar-ref { fill: var(--bar-ref); }
+  .fig .bar-acc { fill: var(--accent); }
+  .fig path.bar-ref:hover, .fig path.bar-acc:hover { opacity: 0.8; }
+  .ah { fill: var(--muted); }
+  .ah-acc { fill: var(--accent); }
+  .fig figcaption {
+    margin-top: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+
+  /* Before / after */
+  .ba { margin: 1.1rem 0; display: grid; gap: 0.5rem; }
+  .ba-row {
+    position: relative;
+    padding: 0.7rem 0.9rem 0.6rem 1rem;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--open-border);
+    border-left-width: 4px;
+  }
+  .ba-old { border-left-color: var(--bar-ref); }
+  .ba-new { border-left-color: var(--accent); }
+  .ba-tag {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .ba-new .ba-tag { color: var(--accent-ink); }
+  .ba-text {
+    margin: 0.25rem 0 0.35rem !important;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+  .ba-old .ba-text { color: var(--muted); }
+  .ba-src { display: block; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
+  .ba-note { margin: 0 !important; font-size: 0.85rem; color: var(--muted); }
+
+
+  /* Tools panels */
+  .tools { margin: 3rem 0 0; }
+  .panel-body { padding: 0.5rem 0.9rem 1.25rem; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .field {
+    width: 100%; font: inherit; font-size: 0.95rem; color: var(--text);
+    background: var(--bg); border: 1px solid var(--open-border); border-radius: 8px;
+    padding: 0.55rem 0.7rem; margin: 0.5rem 0 0.25rem;
+  }
+  .field.mono { font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; resize: vertical; }
+  .field:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  #symTable td.go { white-space: nowrap; }
+  a.jump {
+    display: inline-block; min-width: 1.7rem; padding: 0.05rem 0.4rem; margin: 0 0.15rem 0.2rem 0;
+    text-align: center; text-decoration: none;
+    font-family: var(--sans); font-weight: 700; font-size: 0.82rem;
+    color: var(--text); background: var(--accent-tint); border: 1px solid var(--accent-border); border-radius: 999px;
+  }
+  a.jump:hover { border-color: var(--accent); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0; }
+  .btn {
+    font-family: var(--sans); font-weight: 700; font-size: 0.85rem; color: var(--text);
+    background: transparent; border: 1px solid var(--open-border); border-radius: 999px;
+    padding: 0.4rem 0.95rem; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn-acc { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-acc:hover { filter: brightness(0.95); }
+  .audit-sum { font-family: var(--sans); font-weight: 700; margin: 1rem 0 0.5rem; }
+  .flag {
+    margin: 0.6rem 0; padding: 0.75rem 0.9rem;
+    background: var(--bg); border: 1px solid var(--open-border); border-left: 4px solid var(--accent); border-radius: 8px;
+  }
+  .flag.ok { border-left-color: var(--bar-ref); }
+  .flag h4 { margin: 0 0 0.2rem; font-family: var(--sans); font-size: 0.98rem; }
+  .flag p { margin: 0 0 0.4rem; font-size: 0.95rem; }
+  .flag ul { margin: 0.2rem 0 0.4rem; padding-left: 0; list-style: none; }
+  .flag li { font-family: var(--mono); font-size: 0.76rem; line-height: 1.5; margin: 0.25rem 0; overflow-wrap: anywhere; }
+  .flag .ln { color: var(--muted); margin-right: 0.4rem; }
+  .flag mark { background: var(--accent-tint); color: var(--text); border-bottom: 2px solid var(--accent); padding: 0 1px; }
+  .flag .see { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  details.idea.flash > summary { box-shadow: 0 0 0 2px var(--accent); }
+
+
+  /* Glossary links + back pill */
+  a.gl {
+    color: inherit;
+    text-decoration: underline dotted;
+    text-decoration-color: var(--muted);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    border-radius: 3px;
+  }
+  a.gl:hover { background: var(--accent-tint); text-decoration-color: var(--accent); }
+  a.gl.flash { background: var(--accent-tint); box-shadow: 0 0 0 2px var(--accent-border); }
+  #glossary tr.flash td { background: var(--accent-tint); }
+  #glossary tr td { transition: background 0.4s ease; }
+  #glossary tr { scroll-margin-top: 5rem; scroll-margin-bottom: 6rem; }
+  .back-pill {
+    position: fixed; left: 50%; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    transform: translate(-50%, 1rem); opacity: 0; pointer-events: none;
+    z-index: 20; display: flex; align-items: center;
+    background: var(--accent); color: #fff; border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .back-pill.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .back-pill button {
+    font-family: var(--sans); font-weight: 700; font-size: 0.9rem; color: inherit;
+    background: transparent; border: 0; cursor: pointer; padding: 0.6rem 0.4rem 0.6rem 1.1rem; white-space: nowrap;
+  }
+  .back-pill .x { padding: 0.6rem 0.9rem 0.6rem 0.5rem; font-size: 1.05rem; line-height: 1; opacity: 0.85; }
+  .back-pill .x:hover { opacity: 1; }
+  .back-pill button:focus-visible { outline: 2px solid #fff; outline-offset: -4px; border-radius: 999px; }
+  @media (prefers-reduced-motion: reduce) { .back-pill { transition: none; } }
+
+  /* Appendix */
+  details.appendix { margin: 1rem 0; }
+  details.appendix > summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0.9rem;
+    margin-top: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  details.appendix > summary::-webkit-details-marker { display: none; }
+  details.appendix[open] > summary { background: var(--open-bg); border-color: var(--open-border); }
+  .appendix-body { padding: 0.5rem 0.9rem 1.25rem; }
+  .appendix-body td:first-child { font-family: var(--sans); font-weight: 700; white-space: nowrap; }
+  .sources li { margin: 0.4rem 0; }
+  .note { font-size: 0.95rem; color: var(--muted); }
+  .note ul { padding-left: 1.2rem; }
+
+  @media (max-width: 34rem) {
+    body { font-size: 1.05rem; }
+    details.idea > summary { grid-template-columns: 2rem 1fr 1.25rem; padding: 0.8rem 0.6rem; }
+    .body { padding: 0.5rem 0.6rem 1.25rem 0.6rem; }
+    blockquote { margin-left: 0.25rem; }
+    .appendix-body td:first-child { white-space: normal; }
+    .counter { width: 100%; margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker>
+  <marker id="arrA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ah-acc"/></marker>
+</defs></svg>
+<main>
+
+<header>
+  <p class="eyebrow">Code with Claude London · Margot van Laar, Anthropic · The prompting playbook</p>
+  <div class="title-row">
+    <h1><span class="n">25</span> ideas from Anthropic's prompting playbook</h1>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 3.5v17M4.64 7.75l14.72 8.5M4.64 16.25l14.72-8.5"/></svg></button>
+  </div>
+  <div class="lead">
+    <p>This is a breakout session from Code with Claude London, held on 19 May 2026. Margot van Laar, an applied AI engineer at Anthropic, works through two cases.</p>
+    <p>First, she rescues a support-bot prompt that broke after a model migration. Then she builds a scheduling agent from scratch.</p>
+    <p>Her thesis: let <a href="#g-eval" class="gl" data-term="Eval">evals</a> drive every change. Fix the whole system (prompt, model and <a href="#g-harness" class="gl" data-term="Harness">harness</a>) instead of adding louder instructions.</p>
+  </div>
+  <p class="meta">Session recording, ~33 min · Summary built from the auto-generated captions · Timestamps open the video at that moment</p>
+</header>
+
+
+
+<div class="toolbar" role="toolbar" aria-label="Takeaway controls">
+  <button type="button" id="expandAll">Expand all</button>
+  <button type="button" id="collapseAll">Collapse all</button>
+  <span class="counter" id="counter" aria-live="polite">0 of 25 expanded</span>
+</div>
+
+<!-- ============ EVALS ============ -->
+<h2 class="group">Evals first <span class="range">1–4</span></h2>
+
+<details class="idea" id="idea-1">
+  <summary>
+    <span class="num">1</span>
+    <div>
+      <p class="sum-lead">Build evals before you touch the prompt.</p>
+      <p class="sum-text">Evals tell you whether a change actually helped. They also tell you whether the model can do the job at all.</p>
+      <p class="hint">Details · quotes · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Evals tell behavior problems apart from capability problems</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=173s">Watch at 2:53</a>
+    <p><strong>A migration can break for two reasons.</strong> The new model may be capable but behave differently. Or it may simply be less capable.</p>
+    <p><strong>Prompting fixes only one of them.</strong> A behavior change responds to prompt tuning. A capability gap doesn't, and no rewrite will close it.</p>
+    <p><strong><a href="#g-eval" class="gl" data-term="Eval">Evals</a> are the referee.</strong> They show you which case you're in before you spend hours rewriting.</p>
+        <figure class="fig"><svg viewBox="0 0 600 210" role="img" aria-label="Flow: evals drop after a model switch; evals show whether it is a behavior change (tune the prompt) or a capability gap (no prompt fixes it)."><rect x="10" y="75" width="150" height="60" rx="8" class="b-plain"/><text x="85.0" y="100.5" text-anchor="middle">Evals drop after</text><text x="85.0" y="119.5" text-anchor="middle">a model switch</text><line x1="160" y1="105" x2="203" y2="105" class="ln" marker-end="url(#arr)"/><rect x="205" y="65" width="170" height="80" rx="8" class="b-plain"/><text x="290.0" y="91.0" text-anchor="middle">Run the evals:</text><text x="290.0" y="110.0" text-anchor="middle">behavior or</text><text x="290.0" y="129.0" text-anchor="middle">capability?</text><line x1="375" y1="92" x2="423" y2="52" class="ln-acc" marker-end="url(#arrA)"/><line x1="375" y1="118" x2="423" y2="158" class="ln" marker-end="url(#arr)"/><rect x="425" y="15" width="165" height="64" rx="8" class="b-acc"/><text x="507.5" y="42.5" text-anchor="middle">Behaves differently</text><text x="507.5" y="61.5" text-anchor="middle" class="sm">→ tune the prompt</text><rect x="425" y="131" width="165" height="64" rx="8" class="b-mute"/><text x="507.5" y="158.5" text-anchor="middle">Less capable</text><text x="507.5" y="177.5" text-anchor="middle" class="sm">→ no prompt will fix it</text></svg><figcaption>The eval tells you which branch you are on before you rewrite anything.</figcaption></figure>
+    <blockquote><p>"We need evaluations to provide that rigor to understand whether a change to our prompt is actually correlating to an improvement in its performance."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"The second case is where actually the model that we're changing to isn't as capable and no amount of prompting is going to fix that."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Before your next model migration, run your current <a href="#g-eval-suite" class="gl" data-term="Eval suite">eval set</a> on both models and compare the results.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-2">
+  <summary>
+    <span class="num">2</span>
+    <div>
+      <p class="sum-lead">Cover controls, edge cases and limits.</p>
+      <p class="sum-text">Even a small eval set can be representative. It just needs all three kinds of case.</p>
+      <p class="hint">Details · table · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Three kinds of test case, even in a tiny suite</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=249s">Watch at 4:09</a>
+    <p><strong><a href="#g-control-case" class="gl" data-term="Control case">Control cases</a>.</strong> These are easy, clear-cut questions that should always pass. They catch breakage in the basics.</p>
+    <p><strong><a href="#g-edge-case" class="gl" data-term="Edge case">Edge cases</a>.</strong> These are places where the model has failed before. The prompt has instructions to stop those failures, and the <a href="#g-eval" class="gl" data-term="Eval">eval</a> checks that the instructions still work.</p>
+    <p><strong>Limits.</strong> These test whether the model knows its boundaries: when to hand off to a human, when to refuse, and when to share what it knows.</p>
+    <p>Her demo bot was a support agent for a fictional telco, Meridian Mobile. Its suite had five cases:</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Test case</th><th>Type</th><th>What it checks</th></tr></thead>
+      <tbody>
+        <tr><td>Data limit on the basic plan</td><td>Control</td><td>A simple fact lookup</td></tr>
+        <tr><td>Next bill after a mid-month upgrade</td><td>Edge</td><td><a href="#g-proration" class="gl" data-term="Proration">Prorated</a> billing math</td></tr>
+        <tr><td>Prepaid policy question</td><td>Edge</td><td>Answers match written policy</td></tr>
+        <tr><td>Billing error</td><td>Limit</td><td><a href="#g-escalation" class="gl" data-term="Escalation">Escalates</a> to a human</td></tr>
+        <tr><td>Hotspot data on a <a href="#g-grandfathered-legacy-plan" class="gl" data-term="Grandfathered (legacy) plan">legacy plan</a></td><td>Limit</td><td>Shares information it has</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote><p>"where it should be handing off to a human or where actually maybe it should be point blank refusing to answer a request."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Tag every case in your suite as control, edge or limit. Then fill any bucket that's empty.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-3">
+  <summary>
+    <span class="num">3</span>
+    <div>
+      <p class="sum-lead">Grade hard rules with code, not an LLM judge.</p>
+      <p class="sum-text">When a rule can be checked objectively, a function is cheaper and more reliable. Keep LLM judges for fuzzier answers.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>If a rule can be counted, count it</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1490s">Watch at 24:50</a>
+    <p><strong>The talk used two grading styles.</strong> An <a href="#g-llm-judge" class="gl" data-term="LLM judge">LLM judge</a> graded the support bot. A <a href="#g-programmatic-grader" class="gl" data-term="Programmatic grader">Python function</a> graded the scheduling agent.</p>
+    <p><strong>Code wins for <a href="#g-hard-vs-soft-constraints" class="gl" data-term="Hard vs. soft constraints">hard rules</a>.</strong> The scheduler had strict constraints. A function counts violations exactly, on every run, at no token cost.</p>
+    <p><strong>Report counts, not just pass or fail.</strong> The demo showed the number of violations in each <a href="#g-trial" class="gl" data-term="Trial">trial</a>. That made progress visible even while every case still failed.</p>
+    <blockquote><p>"we can actually use a just a Python function which programmatically checks for every schedule that's generated how many violations were made."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>List the rules in your task that can be checked objectively. Write a checker for those first.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-4">
+  <summary>
+    <span class="num">4</span>
+    <div>
+      <p class="sum-lead">Don't chase a single noisy regression.</p>
+      <p class="sum-text">Results vary from run to run. One drop after a good change may be noise, not a real problem.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Expect variance and judge trends</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=632s">Watch at 10:32</a>
+    <p><strong>What happened.</strong> After the <a href="#g-prompt-hygiene" class="gl" data-term="Prompt hygiene">cleanup</a>, the prepaid case improved but the hotspot case had a <a href="#g-regression" class="gl" data-term="Regression">regression</a>. She noted it and moved on.</p>
+    <p><strong>Why that was right.</strong> LLM outputs vary between runs. If you react to every blip, you end up chasing ghosts.</p>
+    <p><strong>Come back with a targeted fix.</strong> She fixed the hotspot case later, on purpose, by finding its actual cause (idea 11).</p>
+    <blockquote><p>"There's going to be some natural level of variance in the different runs of the eval and we'll come back to that case specifically to see if we can make the prompt consistently better in that area."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Run each case several times. The scheduling demo used five <a href="#g-trial" class="gl" data-term="Trial">trials</a> per case.</p></div>
+  </div>
+</details>
+
+<!-- ============ HYGIENE ============ -->
+<h2 class="group">Prompt hygiene <span class="range">5–9</span></h2>
+
+<details class="idea" id="idea-5">
+  <summary>
+    <span class="num">5</span>
+    <div>
+      <p class="sum-lead">Clean up the prompt before you debug it.</p>
+      <p class="sum-text">Do the basic cleanup first, then run your evals. Cleanup alone often improves results.</p>
+      <p class="hint">Details · quotes · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Cleanup first, targeted fixes second</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=399s">Watch at 6:39</a>
+    <p><strong>Most prompt work is maintenance.</strong> You usually inherit a prompt instead of writing one. It has grown over time and passed through many hands.</p>
+    <p><strong>Clean it, then measure.</strong> Removing the noise gives you a fair baseline. After that, each fix shows its own effect.</p>
+    <p><strong>It paid off right away.</strong> Better structure and a clearer role description fixed the prepaid case without targeting it at all.</p>
+    <blockquote><p>"We are rarely writing a prompt from scratch. We're often debugging an existing prompt."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"best practice before we start targeting those failure modes specifically is to kind of apply our general prompting 101 best practices, applying general hygiene to clean up before we do the eval run."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Give your oldest production prompt a <a href="#g-prompt-hygiene" class="gl" data-term="Prompt hygiene">cleanup</a> pass before your next <a href="#g-eval" class="gl" data-term="Eval">eval</a> run.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-6">
+  <summary>
+    <span class="num">6</span>
+    <div>
+      <p class="sum-lead">Delete anything untrue or unneeded.</p>
+      <p class="sum-text">Old prompts pile up junk, like false claims and pasted web copy. The model has to read around every bit of it.</p>
+      <p class="hint">Details · quotes · next step · before/after · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Clear out what has built up</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=523s">Watch at 8:43</a>
+    <p><strong>False statements.</strong> The prompt told the bot it was a human. That simply wasn't true.</p>
+    <p><strong>Pasted content.</strong> The plan data had been copied straight from a website. References to a hero image and to cookies gave it away.</p>
+    <p><strong>Signs of a prompt nobody owns.</strong> Look for many contributors and no clear owner. Look for policy, tone, process and old-model <a href="#g-patch" class="gl" data-term="Patch">patches</a> all mixed together.</p>
+    <div class="ba"><div class="ba-row ba-old"><span class="ba-tag">Before</span><p class="ba-text">You are a human customer care agent at Meridian Mobile. … [hero image] … Accept all cookies to continue.</p><span class="ba-src">Rebuilt · illustrative, not shown verbatim</span></div><div class="ba-row ba-new"><span class="ba-tag">After</span><p class="ba-text">You are Meridian Mobile&#x27;s AI support assistant. (Pasted web copy removed.)</p><span class="ba-src">Rebuilt · illustrative, not shown verbatim</span></div><p class="ba-note">She described the human claim and the hero-image and cookie leftovers; the exact lines were on her screen, not in the captions.</p></div>
+    <blockquote><p>"we're telling the bot that it's a human, which just isn't true, right?"</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"So the key giveaway here is a reference to a hero image."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Search your prompt for web leftovers such as "cookie", "click here", "image" and "menu". Delete what you find.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-7">
+  <summary>
+    <span class="num">7</span>
+    <div>
+      <p class="sum-lead">Separate role, guidelines, policy, tone and data.</p>
+      <p class="sum-text">Use XML tags so each kind of content has its own place. If you can't tell them apart, the model can't either.</p>
+      <p class="hint">Details · quote · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Give each kind of content its own section</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=555s">Watch at 9:15</a>
+    <p><strong>Before.</strong> The instructions sat in one big paragraph. Reasoning steps, the role and "critical" rules were all mixed together.</p>
+    <p><strong>After.</strong> <a href="#g-xml-tags" class="gl" data-term="XML tags">XML tags</a> marked off the role, the general guidelines, the policy, the tone of voice and the data. The customer's account details and message came last.</p>
+    <p><strong>A test you can use anytime.</strong> Read the prompt as a stranger would. If the sections blur together, restructure it.</p>
+        <figure class="fig"><svg viewBox="0 0 600 252" role="img" aria-label="Before: one undifferentiated paragraph. After: separate tagged sections for role, guidelines, policy, tone, data, and account plus message."><text x="140" y="20" text-anchor="middle" class="lab">BEFORE · one paragraph</text><text x="450" y="20" text-anchor="middle" class="lab">AFTER · tagged sections</text><rect x="20" y="32" width="240" height="210" rx="8" class="b-plain"/><rect x="40" y="50.0" width="200" height="6" rx="3" class="tl"/><rect x="40" y="65.5" width="185" height="6" rx="3" class="tl"/><rect x="40" y="81.0" width="205" height="6" rx="3" class="tl"/><rect x="40" y="96.5" width="170" height="6" rx="3" class="tl"/><rect x="40" y="112.0" width="198" height="6" rx="3" class="tl"/><rect x="40" y="127.5" width="150" height="6" rx="3" class="tl"/><rect x="40" y="143.0" width="204" height="6" rx="3" class="tl"/><rect x="40" y="158.5" width="188" height="6" rx="3" class="tl"/><rect x="40" y="174.0" width="176" height="6" rx="3" class="tl"/><rect x="40" y="189.5" width="202" height="6" rx="3" class="tl"/><rect x="40" y="205.0" width="160" height="6" rx="3" class="tl"/><rect x="40" y="220.5" width="120" height="6" rx="3" class="tl"/><line x1="268" y1="137" x2="312" y2="137" class="ln-acc" marker-end="url(#arrA)"/><rect x="320" y="32" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="32" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="52" text-anchor="middle" class="mono">&lt;role&gt;</text><rect x="320" y="68" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="68" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="88" text-anchor="middle" class="mono">&lt;guidelines&gt;</text><rect x="320" y="104" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="104" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="124" text-anchor="middle" class="mono">&lt;policy&gt;</text><rect x="320" y="140" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="140" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="160" text-anchor="middle" class="mono">&lt;tone&gt;</text><rect x="320" y="176" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="176" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="196" text-anchor="middle" class="mono">&lt;data&gt;</text><rect x="320" y="212" width="260" height="30" rx="6" class="b-plain"/><rect x="320" y="212" width="5" height="30" rx="2" class="fill-acc"/><text x="455" y="232" text-anchor="middle" class="mono">&lt;account + message&gt;</text></svg><figcaption>Same content, separated. Section names are illustrative; the talk did not show her exact tags.</figcaption></figure>
+    <blockquote><p>"if you're reading a prompt and you can't tell guidelines from policy, from data, most likely the model isn't able to either."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Wrap each section in a named tag, for example <code>&lt;role&gt;</code>, <code>&lt;policy&gt;</code>, <code>&lt;tone&gt;</code> and <code>&lt;customer_context&gt;</code>. These names are illustrative; the talk didn't list her exact tags.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-8">
+  <summary>
+    <span class="num">8</span>
+    <div>
+      <p class="sum-lead">Write an output contract.</p>
+      <p class="sum-text">Tell the model exactly what shape its answer should take. This matters most for complex formats like nested JSON.</p>
+      <p class="hint">Details · quote · next step · before/after · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Define the shape of the answer</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=690s">Watch at 11:30</a>
+    <p><strong>What she added.</strong> A section at the end of the prompt telling the model to wrap its reply in <a href="#g-xml-tags" class="gl" data-term="XML tags">XML tags</a>.</p>
+    <p><strong>When it matters.</strong> A chatty support bot rarely breaks on format. Nested JSON breaks easily.</p>
+    <p><strong>In the scheduler, it was essential.</strong> The schedule came back as JSON. Without a set structure, parsing it downstream could fail.</p>
+    <div class="ba"><div class="ba-row ba-old"><span class="ba-tag">Before</span><p class="ba-text">(No output format given.)</p><span class="ba-src">Rebuilt · illustrative, not shown verbatim</span></div><div class="ba-row ba-new"><span class="ba-tag">After</span><p class="ba-text">Wrap your reply to the customer in &lt;response&gt;&lt;/response&gt; tags.
++ API: stop_sequences=[&quot;&lt;/response&gt;&quot;]</p><span class="ba-src">Rebuilt · illustrative, not shown verbatim</span></div><p class="ba-note">The tag name is illustrative. The pattern — XML-tagged reply plus a stop sequence on the closing tag — is what she showed.</p></div>
+    <blockquote><p>"This is a key best practice to follow if you're struggling with your output format consistency."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>End your prompt with an "Output format" section that shows the exact tags or schema you expect.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-9">
+  <summary>
+    <span class="num">9</span>
+    <div>
+      <p class="sum-lead">Enforce the format in the harness, not just the prompt.</p>
+      <p class="sum-text">API settings can guarantee what a prompt can only request. Use stop sequences and structured outputs.</p>
+      <p class="hint">Details · quotes · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Let the API do the enforcing</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=742s">Watch at 12:22</a>
+    <p><strong><a href="#g-stop-sequence" class="gl" data-term="Stop sequence">Stop sequence</a>.</strong> She added a stop sequence for the closing <a href="#g-xml-tags" class="gl" data-term="XML tags">XML tag</a>. Generation stops there, so nothing trails after the answer.</p>
+    <p><strong><a href="#g-structured-outputs" class="gl" data-term="Structured outputs">Structured outputs</a>.</strong> For complex schemas, structured outputs enforce the shape in code.</p>
+    <p><strong>Don't expect the score to jump.</strong> She said the <a href="#g-eval" class="gl" data-term="Eval">eval</a> might not move at all. This is insurance, not a fix.</p>
+    <blockquote><p>"But the prompt is not always the most effective way of handling issues. We can also change things in the harness to ensure consistency to a higher degree."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"if you do have a more complex output schema something like structured outputs can be incredibly helpful to ensure that consistency in a more programmatic way."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>If your code parses model output, add a stop sequence or a JSON schema to that call.</p></div>
+  </div>
+</details>
+
+<!-- ============ DEBUGGING ============ -->
+<h2 class="group">Debugging failure modes <span class="range">10–17</span></h2>
+
+<details class="idea" id="idea-10">
+  <summary>
+    <span class="num">10</span>
+    <div>
+      <p class="sum-lead">Fix one failure mode at a time.</p>
+      <p class="sum-text">Isolate a failing case, find its cause, fix it and re-run. Then move to the next one.</p>
+      <p class="hint">Details · steps · quote · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>A repeatable loop for debugging a prompt</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=801s">Watch at 13:21</a>
+    <ol>
+      <li>Run the <a href="#g-eval" class="gl" data-term="Eval">eval</a>.</li>
+      <li>Pick one failing case.</li>
+      <li>Read the model's output to see what it actually did.</li>
+      <li>Find the line in the prompt it's following, or the capability it lacks.</li>
+      <li>Change that one thing, re-run, and confirm the fix.</li>
+    </ol>
+    <p><strong>Every fix in the talk followed this loop.</strong> She traced the hotspot, <a href="#g-proration" class="gl" data-term="Proration">proration</a> and billing failures to one line or one missing capability each.</p>
+    <p><strong>Avoid long ban lists.</strong> Her recap lists this among the moves that helped. She didn't expand on it, but it matches ideas 11 and 16.</p>
+        <figure class="fig"><svg viewBox="0 0 600 296" role="img" aria-label="A loop of five steps: run the eval, pick one failure, read the output, find the cause, change one thing, then repeat."><line x1="364.4" y1="71.4" x2="425.8" y2="93.7" class="ln-acc" marker-end="url(#arrA)"/><line x1="472.8" y1="144.0" x2="435.0" y2="202.0" class="ln-acc" marker-end="url(#arrA)"/><line x1="335.6" y1="228.9" x2="264.4" y2="228.9" class="ln-acc" marker-end="url(#arrA)"/><line x1="165.0" y1="202.0" x2="127.2" y2="144.0" class="ln-acc" marker-end="url(#arrA)"/><line x1="174.2" y1="93.7" x2="235.6" y2="71.4" class="ln-acc" marker-end="url(#arrA)"/><rect x="225.0" y="27.0" width="150" height="42" rx="8" class="b-plain"/><text x="300.0" y="53.0" text-anchor="middle">1. Run the eval</text><rect x="415.2" y="96.1" width="150" height="42" rx="8" class="b-plain"/><text x="490.2" y="122.1" text-anchor="middle">2. Pick one failure</text><rect x="342.6" y="207.9" width="150" height="42" rx="8" class="b-plain"/><text x="417.6" y="233.9" text-anchor="middle">3. Read the output</text><rect x="107.4" y="207.9" width="150" height="42" rx="8" class="b-plain"/><text x="182.4" y="233.9" text-anchor="middle">4. Find the cause</text><rect x="34.8" y="96.1" width="150" height="42" rx="8" class="b-acc"/><text x="109.8" y="122.1" text-anchor="middle">5. Change one thing</text><text x="300" y="146" text-anchor="middle" class="sm">one failure</text><text x="300" y="164" text-anchor="middle" class="sm">at a time</text></svg><figcaption>Every fix in the talk went once around this loop.</figcaption></figure>
+    <blockquote><p>"we'll see what our failure modes are and systematically target those failure modes one at a time to see if we can resolve those failure modes by prompting"</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Keep a short log for each fix: failing case, cause, change and result.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-11">
+  <summary>
+    <span class="num">11</span>
+    <div>
+      <p class="sum-lead">Audit the patches you wrote for old models.</p>
+      <p class="sum-text">Newer models follow instructions more closely. A rule that once prevented errors can now be followed too strictly.</p>
+      <p class="hint">Details · table · quotes · next step · before/after · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Yesterday's guardrail is today's bug</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=910s">Watch at 15:10</a>
+    <p><strong>The failure.</strong> A customer on a <a href="#g-grandfathered-legacy-plan" class="gl" data-term="Grandfathered (legacy) plan">legacy plan</a> asked how much hotspot data they had. The bot quoted the current plan and sent them to a URL.</p>
+    <p><strong>The cause.</strong> An old rule said never to give wrong plan details and to point to the URL instead. The model put that rule above everything else.</p>
+    <p><strong>Why it showed up now.</strong> Models have got better at following instructions. Defensive rules first become unnecessary, and then the model <a href="#g-overfitting-to-an-instruction" class="gl" data-term="Overfitting (to an instruction)">over-applies</a> them.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Item</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Customer's allowance (in their account data)</td><td>5 GB</td></tr>
+        <tr><td>Hotspot on the current unlimited plan</td><td>4 GB</td></tr>
+        <tr><td>What the bot said</td><td>4 GB, then "check this yourself" via a URL</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ba"><div class="ba-row ba-old"><span class="ba-tag">Before</span><p class="ba-text">We changed our plans recently and the policy doc shows the current plan data, and customers on grandfathered plans have different rates. Never give a customer the wrong plan details. Instead point them to the URL.</p><span class="ba-src">From the talk · read aloud, captions lightly cleaned</span></div><div class="ba-row ba-new"><span class="ba-tag">After</span><p class="ba-text">Customers on grandfathered plans have different allowances, but it&#x27;s captured in the customer information that&#x27;s given, and that is the accurate source of truth.</p><span class="ba-src">From the talk · her paraphrase</span></div></div>
+    <blockquote><p>"So, it's likely that instructions like these have now become redundant and are actually being overfitted to."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>On every migration, list each "never" and "always" rule. Ask whether the new model still needs it.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-12">
+  <summary>
+    <span class="num">12</span>
+    <div>
+      <p class="sum-lead">Point the model at the source of truth.</p>
+      <p class="sum-text">Don't tell it to deflect when it's unsure. Tell it which data to trust.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Replace "send them elsewhere" with a rule for deciding</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=966s">Watch at 16:06</a>
+    <p><strong>The fix.</strong> The new wording said <a href="#g-grandfathered-legacy-plan" class="gl" data-term="Grandfathered (legacy) plan">grandfathered plans</a> have different allowances. It also said the customer's own account data is the accurate source of truth.</p>
+    <p><strong>Balanced, not banned.</strong> Now the model knows when the general policy applies and when the account data wins.</p>
+    <p><strong>The result.</strong> Every hotspot <a href="#g-trial" class="gl" data-term="Trial">trial</a> passed on the next run.</p>
+    <blockquote><p>"customers on grandfather's plan have different allowances, but it's captured in the customer information that's given and that is the accurate source of truth."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Wherever two sources might disagree, add one sentence naming which one wins.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-13">
+  <summary>
+    <span class="num">13</span>
+    <div>
+      <p class="sum-lead">Test for withheld information, not just hallucination.</p>
+      <p class="sum-text">Models can hold back facts they have. Add eval cases that check the model shares what it knows.</p>
+      <p class="hint">Details · quotes · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>The opposite of making things up</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1000s">Watch at 16:40</a>
+    <p><strong>Teams worry about invention.</strong> <a href="#g-hallucination" class="gl" data-term="Hallucination">Hallucination</a>, meaning made-up facts and numbers, gets most of the attention.</p>
+    <p><strong><a href="#g-withholding" class="gl" data-term="Withholding">Withholding</a> is just as real.</strong> The hotspot bot had the 5 GB figure and didn't state it.</p>
+    <p><strong>It often comes from caution rules.</strong> A rule meant to stop wrong answers can also block right ones.</p>
+        <figure class="fig"><svg viewBox="0 0 600 160" role="img" aria-label="A spectrum: hallucination says more than it knows, correct says what it knows, withholding says less than it knows."><line x1="20" y1="70" x2="580" y2="70" class="axis"/><rect x="15" y="40" width="170" height="60" rx="8" class="b-plain"/><text x="100.0" y="65.5" text-anchor="middle">Hallucination</text><text x="100.0" y="84.5" text-anchor="middle" class="sm">says more than it knows</text><rect x="215" y="40" width="170" height="60" rx="8" class="b-acc"/><text x="300.0" y="65.5" text-anchor="middle">Correct</text><text x="300.0" y="84.5" text-anchor="middle" class="sm">says what it knows</text><rect x="415" y="40" width="170" height="60" rx="8" class="b-plain"/><text x="500.0" y="65.5" text-anchor="middle">Withholding</text><text x="500.0" y="84.5" text-anchor="middle" class="sm">says less than it knows</text><text x="100" y="128" text-anchor="middle" class="sm">Gets most of the attention</text><text x="500" y="128" text-anchor="middle" class="sm">Hotspot bot: had 5 GB in</text><text x="500" y="146" text-anchor="middle" class="sm">its context, sent a URL</text></svg><figcaption>Errors run in both directions. Test for both.</figcaption></figure>
+    <blockquote><p>"we worry a lot about hallucinations or the invention of facts and numbers, but actually the opposite can also happen."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"The model can withhold information that it actually has access to."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Add a test where the answer is in the context. Fail any reply that sends the user elsewhere instead of answering.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-14">
+  <summary>
+    <span class="num">14</span>
+    <div>
+      <p class="sum-lead">Version-control defensive edits, and record why.</p>
+      <p class="sum-text">Write down why each patch exists. Then you can safely remove it later.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Leave a note for whoever edits the prompt next</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1026s">Watch at 17:06</a>
+    <p><strong><a href="#g-patch" class="gl" data-term="Patch">Patches</a> outlive their purpose.</strong> The hotspot rule probably fixed a real problem on an older model.</p>
+    <p><strong>Without a reason, nobody dares delete it.</strong> With one, you can check whether the original problem still happens.</p>
+    <p><strong>Treat the prompt like code.</strong> Every change, its author and its reason belong in the history.</p>
+    <blockquote><p>"wherever we are making defensive changes in the prompt, we are tracking the reason why we've introduced these."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Keep prompts in git. In each defensive commit, include the failing example and the model version.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-15">
+  <summary>
+    <span class="num">15</span>
+    <div>
+      <p class="sum-lead">Give the model a tool instead of a stern instruction.</p>
+      <p class="sum-text">Instructions don't add capability. If a task needs exact math, give the model a calculator.</p>
+      <p class="hint">Details · steps · quotes · next step · diagram · before/after · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Instructions don't add capability</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1051s">Watch at 17:31</a>
+    <p><strong>The failure.</strong> A customer asked what their next bill would be after upgrading to the 30 GB plan. The bot did mental math and gave a vague answer.</p>
+    <p><strong>The old prompt just insisted.</strong> It said never give a vague answer and always calculate <a href="#g-proration" class="gl" data-term="Proration">prorated</a> amounts correctly. Neither made the model better at arithmetic.</p>
+    <p><strong>The fix had three parts:</strong></p>
+    <ol>
+      <li>A line in the prompt: use the proration <a href="#g-tool-tool-schema" class="gl" data-term="Tool / tool schema">tool</a> for any calculation.</li>
+      <li>A tool schema in the API call saying what the tool does and when to use it.</li>
+      <li>The code that actually does the math.</li>
+    </ol>
+    <p><strong>The result.</strong> Every proration <a href="#g-trial" class="gl" data-term="Trial">trial</a> passed.</p>
+        <figure class="fig"><svg viewBox="0 0 600 204" role="img" aria-label="Before: a CRITICAL instruction leads to mental math and a vague answer. After: a prompt line, a tool schema and your code produce an exact bill."><text x="10" y="22" text-anchor="start" class="lab">BEFORE · instruction only</text><rect x="10" y="32" width="170" height="54" rx="8" class="b-mute"/><text x="95.0" y="54.5" text-anchor="middle">“CRITICAL: calculate</text><text x="95.0" y="73.5" text-anchor="middle">correctly”</text><line x1="180" y1="59" x2="213" y2="59" class="ln" marker-end="url(#arr)"/><rect x="215" y="32" width="170" height="54" rx="8" class="b-mute"/><text x="300.0" y="64.0" text-anchor="middle">Mental math</text><line x1="385" y1="59" x2="418" y2="59" class="ln" marker-end="url(#arr)"/><rect x="420" y="32" width="170" height="54" rx="8" class="b-mute"/><text x="505.0" y="64.0" text-anchor="middle">Vague answer</text><text x="10" y="124" text-anchor="start" class="lab">AFTER · give it a tool</text><rect x="10" y="134" width="112" height="60" rx="8" class="b-plain"/><text x="66.0" y="159.5" text-anchor="middle">Prompt line:</text><text x="66.0" y="178.5" text-anchor="middle" class="sm">use the tool</text><line x1="122" y1="164" x2="164" y2="164" class="ln-acc" marker-end="url(#arrA)"/><rect x="166" y="134" width="112" height="60" rx="8" class="b-plain"/><text x="222.0" y="159.5" text-anchor="middle">Tool schema:</text><text x="222.0" y="178.5" text-anchor="middle" class="sm">what + when</text><line x1="278" y1="164" x2="320" y2="164" class="ln-acc" marker-end="url(#arrA)"/><rect x="322" y="134" width="112" height="60" rx="8" class="b-plain"/><text x="378.0" y="159.5" text-anchor="middle">Your code:</text><text x="378.0" y="178.5" text-anchor="middle" class="sm">does the math</text><line x1="434" y1="164" x2="476" y2="164" class="ln-acc" marker-end="url(#arrA)"/><rect x="478" y="134" width="112" height="60" rx="8" class="b-acc"/><text x="534.0" y="169.0" text-anchor="middle">Exact bill</text></svg><figcaption>An instruction changes what the model wants to do. A tool changes what it can do.</figcaption></figure>
+    <div class="ba"><div class="ba-row ba-old"><span class="ba-tag">Before</span><p class="ba-text">Don&#x27;t ever give a customer a vague answer. CRITICAL: always calculate any prorated amounts correctly.</p><span class="ba-src">From the talk · read aloud, captions lightly cleaned</span></div><div class="ba-row ba-new"><span class="ba-tag">After</span><p class="ba-text">Whenever you&#x27;re doing any calculations, use the calculate_proration tool.
++ tool schema in the API call + the code that does the math</p><span class="ba-src">From the talk · her paraphrase</span></div><p class="ba-note">Captions spell it &quot;pr-rated&quot;; read as &quot;prorated&quot;. The tool name is written as code here; she said &quot;the calculate proration tool&quot;.</p></div>
+    <blockquote><p>"So the key lesson to take away here is instructions don't add capability."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"telling the model to do a good job isn't particularly helpful when we don't give the model the capability to actually do a good job."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Search your prompt for "CRITICAL" and "always … correctly". For each hit, ask whether a tool should do that job.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-16">
+  <summary>
+    <span class="num">16</span>
+    <div>
+      <p class="sum-lead">State both sides of every trade-off.</p>
+      <p class="sum-text">If you only give the cost of an action, the model avoids it. Also say what it costs not to act.</p>
+      <p class="hint">Details · table · quotes · next step · diagram · before/after · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>One-sided incentives produce one-sided behavior</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1277s">Watch at 21:17</a>
+    <p><strong>The failure.</strong> When a billing error came up, the bot tried to diagnose it instead of <a href="#g-escalation" class="gl" data-term="Escalation">escalating</a> to a human.</p>
+    <p><strong>The cause.</strong> The prompt said escalating costs about $8 and counts against a team metric. It never said what failing to escalate costs.</p>
+    <p><strong>The fix.</strong> Add the other side: getting it wrong costs a refund and the customer's trust.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th></th><th>Old prompt</th><th>New prompt</th></tr></thead>
+      <tbody>
+        <tr><td>Cost of escalating</td><td>~$8 per case, and it counts against the team's resolution metric</td><td>Same</td></tr>
+        <tr><td>Cost of not escalating</td><td>Not stated</td><td>A refund, plus lost customer trust</td></tr>
+      </tbody>
+    </table></div>
+        <figure class="fig"><svg viewBox="0 0 600 224" role="img" aria-label="Two scales. Before: only the cost of escalating is stated, so the scale tilts toward not escalating. After: the cost of not escalating is added and the scale balances."><text x="150" y="22" text-anchor="middle" class="lab">BEFORE</text><line x1="150" y1="70" x2="150" y2="188" class="post"/><line x1="110" y1="188" x2="190" y2="188" class="post"/><line x1="70" y1="90" x2="230" y2="50" class="post"/><polygon points="142,82 158,82 150,66" class="fill-ink"/><line x1="70" y1="90" x2="70" y2="110" class="ln"/><rect x="10" y="110" width="120" height="50" rx="8" class="b-plain"/><text x="70.0" y="130.5" text-anchor="middle">Escalating</text><text x="70.0" y="149.5" text-anchor="middle" class="sm">~$8 + team metric</text><line x1="230" y1="50" x2="230" y2="70" class="ln"/><rect x="170" y="70" width="120" height="50" rx="8" class="b-mute"/><text x="230.0" y="90.5" text-anchor="middle">Not escalating</text><text x="230.0" y="109.5" text-anchor="middle" class="sm">(not stated)</text><text x="150" y="214" text-anchor="middle" class="sm">Tilts to: don’t escalate</text><text x="450" y="22" text-anchor="middle" class="lab">AFTER</text><line x1="450" y1="70" x2="450" y2="188" class="post"/><line x1="410" y1="188" x2="490" y2="188" class="post"/><line x1="370" y1="70" x2="530" y2="70" class="post"/><polygon points="442,82 458,82 450,66" class="fill-ink"/><line x1="370" y1="70" x2="370" y2="90" class="ln"/><rect x="310" y="90" width="120" height="50" rx="8" class="b-plain"/><text x="370.0" y="110.5" text-anchor="middle">Escalating</text><text x="370.0" y="129.5" text-anchor="middle" class="sm">~$8 + team metric</text><line x1="530" y1="70" x2="530" y2="90" class="ln"/><rect x="470" y="90" width="120" height="50" rx="8" class="b-acc"/><text x="530.0" y="110.5" text-anchor="middle">Not escalating</text><text x="530.0" y="129.5" text-anchor="middle" class="sm">refund + lost trust</text><text x="450" y="214" text-anchor="middle" class="sm">Model weighs both sides</text></svg><figcaption>State the cost of acting and the cost of not acting.</figcaption></figure>
+    <div class="ba"><div class="ba-row ba-old"><span class="ba-tag">Before</span><p class="ba-text">Avoid escalating or transferring to a care specialist unless absolutely necessary, as it costs approximately $8 and it counts against our team&#x27;s first contact resolution.</p><span class="ba-src">From the talk · read aloud, captions lightly cleaned</span></div><div class="ba-row ba-new"><span class="ba-tag">After</span><p class="ba-text">Escalating costs about $8. But if you get this wrong, it costs a refund as well as customer trust.</p><span class="ba-src">From the talk · her paraphrase</span></div><p class="ba-note">Captions say &quot;fast contract resolution&quot;; &quot;first contact resolution&quot; is the likely metric.</p></div>
+    <blockquote><p>"We're telling it what the cost is to escalating, but not the benefit, which means it's going to overfit again to not escalating this scenario."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"as models become more intelligent, we need to remember to state both sides of the trade-offs"</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>For every "avoid X" rule, add one sentence on when X is worth doing.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-17">
+  <summary>
+    <span class="num">17</span>
+    <div>
+      <p class="sum-lead">Make sure the prompt agrees with your eval.</p>
+      <p class="sum-text">If the eval expects one behavior and the prompt asks for another, the prompt usually wins. Fix the conflict where it starts.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Don't grade the model against rules your prompt contradicts</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1303s">Watch at 21:43</a>
+    <p><strong>The conflict.</strong> The <a href="#g-eval" class="gl" data-term="Eval">eval</a> wanted billing errors <a href="#g-escalation" class="gl" data-term="Escalation">escalated</a>. The prompt said to avoid escalating unless absolutely necessary.</p>
+    <p><strong>The model followed the prompt.</strong> As far as it could tell, it did what it was told.</p>
+    <p><strong>Read the prompt as the model would.</strong> Ask whether a passing answer is what the instructions actually ask for.</p>
+    <blockquote><p>"we've got this clear conflict between what we've defined in the eval in terms of what we want the model to do to do this escalation versus what we're actually telling it to do."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>For each eval case, find the prompt line that supports the expected answer. If there isn't one, or a line contradicts it, fix that.</p></div>
+  </div>
+</details>
+
+<!-- ============ NEW AGENT ============ -->
+<h2 class="group">Building a new agent <span class="range">18–25</span></h2>
+
+<details class="idea" id="idea-18">
+  <summary>
+    <span class="num">18</span>
+    <div>
+      <p class="sum-lead">Treat the prompt, the model and the harness as three levers.</p>
+      <p class="sum-text">A new agent is more than a prompt. Compare different combinations against the same eval.</p>
+      <p class="hint">Details · table · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Three levers, one scoreboard</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1414s">Watch at 23:34</a>
+    <p><strong>The task.</strong> Build a week-long retail staff schedule for eight employees. It has to meet hard staffing rules every time.</p>
+    <p><strong>The method.</strong> Keep the <a href="#g-eval" class="gl" data-term="Eval">eval</a> fixed. Change one lever at a time: the prompt, the model or the <a href="#g-harness" class="gl" data-term="Harness">harness</a>.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Approach</th><th>Lever changed</th><th>Result</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr><td>Sonnet 4.6, simple prompt</td><td>Baseline</td><td>Every case failed</td><td>Lots of tokens</td></tr>
+        <tr><td>Opus 4.7, same prompt</td><td>Model</td><td>Still failed, with far fewer violations</td><td>Not given</td></tr>
+        <tr><td>Opus 4.7 + <a href="#g-adaptive-thinking" class="gl" data-term="Adaptive thinking">adaptive thinking</a></td><td>API setting</td><td>Reliably met the rules</td><td>~3× tokens, ~3× latency (~100 s)</td></tr>
+        <tr><td>Sonnet 4.6, better prompt</td><td>Prompt</td><td>2 of 5 passed; the rest ran out of <a href="#g-max-tokens-output-limit" class="gl" data-term="Max tokens / output limit">output tokens</a></td><td>Even more tokens and latency</td></tr>
+        <tr><td><a href="#g-generate-evaluate-repair-loop" class="gl" data-term="Generate–evaluate–repair loop">Generate → evaluate → repair</a></td><td>Harness</td><td>Every case passed</td><td>Fewer tokens and lower latency than the better-prompt Sonnet run</td></tr>
+      </tbody>
+    </table></div>
+    <blockquote><p>"we need to consider not just the prompt, but also the model that we're using and the harness that we're using."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Before you commit to an approach, try at least one variant on each lever.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-19">
+  <summary>
+    <span class="num">19</span>
+    <div>
+      <p class="sum-lead">Start with a bare-bones baseline.</p>
+      <p class="sum-text">Begin with a minimal prompt and a mid-sized model. Then improve step by step against the eval.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Start simple, then improve</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1513s">Watch at 25:13</a>
+    <p><strong>The baseline.</strong> A short prompt on Sonnet 4.6. It already had XML structure and a JSON output format.</p>
+    <p><strong>It failed every case.</strong> That was fine. It gave her a reference point.</p>
+    <p><strong>What the output showed.</strong> The reasoning was decent but used lots of tokens. The model wasn't checking its own work.</p>
+    <blockquote><p>"We're going to use the bare bones that we think we'll need"</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Save the baseline score. Compare every later change against it.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-20">
+  <summary>
+    <span class="num">20</span>
+    <div>
+      <p class="sum-lead">Try a bigger model to see if reasoning is the bottleneck.</p>
+      <p class="sum-text">Swap in a stronger model and change nothing else. The result shows whether capability is what's holding you back.</p>
+      <p class="hint">Details · quote · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Fewer violations is a signal, even when the case still fails</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1604s">Watch at 26:44</a>
+    <p><strong>The swap.</strong> Same prompt, with Opus 4.7 instead of Sonnet 4.6.</p>
+    <p><strong>The result.</strong> Every case still failed, but with far fewer violations.</p>
+    <p><strong>What that means.</strong> More reasoning power helps. So the next lever to try is more thinking.</p>
+    <blockquote><p>"This isn't good enough to ship because it's still failing, but clearly giving it more reasoning capability is helping drive it towards a better result."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Track violation counts, not just pass or fail, so partial progress shows up.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-21">
+  <summary>
+    <span class="num">21</span>
+    <div>
+      <p class="sum-lead">Let the model decide how much to think.</p>
+      <p class="sum-text">Adaptive thinking is an API setting, not a prompt change. The model spends extra reasoning only where it needs it.</p>
+      <p class="hint">Details · quotes · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Adaptive thinking: a one-setting change with a big payoff</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1646s">Watch at 27:26</a>
+    <p><strong>The change.</strong> She turned on <a href="#g-adaptive-thinking" class="gl" data-term="Adaptive thinking">adaptive thinking</a> for Opus. The prompt stayed essentially the same.</p>
+    <p><strong>The result.</strong> It reliably produced schedules that met every rule.</p>
+    <p><strong>The catch.</strong> It costs a lot more tokens and time (see idea 22).</p>
+    <blockquote><p>"So it can decide for itself how much thinking it needs how much reasoning it needs to use to solve this issue."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"So no change to the prompt really just a change to the API here."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>If a bigger model gets close but not all the way, try adaptive thinking before you rewrite the prompt.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-22">
+  <summary>
+    <span class="num">22</span>
+    <div>
+      <p class="sum-lead">Track tokens and latency, not just pass rate.</p>
+      <p class="sum-text">An approach can pass and still be too slow or costly to ship. Put cost on the scoreboard.</p>
+      <p class="hint">Details · table · quote · next step · chart · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Passing doesn't mean ready to ship</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1674s">Watch at 27:54</a>
+    <p><strong>Opus with thinking passed.</strong> But it used roughly three times the tokens and took three times as long.</p>
+    <p><strong>Latency reached about 100 seconds.</strong> She ran it in the background during the demo to save time.</p>
+    <p><strong>So she kept going.</strong> The new goal was the same pass rate at a lower cost.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Metric</th><th>Opus 4.7</th><th>Opus 4.7 + adaptive thinking</th></tr></thead>
+      <tbody>
+        <tr><td>Tokens</td><td>Reference</td><td>~3×</td></tr>
+        <tr><td>Latency</td><td>Reference</td><td>~3× (about 100 s)</td></tr>
+        <tr><td>Result</td><td>Still failing</td><td>Reliably met the rules</td></tr>
+      </tbody>
+    </table></div>
+        <figure class="fig"><svg viewBox="0 0 600 182" role="img" aria-label="Bar chart indexed to Opus 4.7: with adaptive thinking, tokens are about 3 times and latency about 3 times, roughly 100 seconds."><rect x="150" y="6" width="12" height="12" rx="3" class="bar-ref"/><text x="168" y="16" text-anchor="start" class="sm">Opus 4.7</text><rect x="250" y="6" width="12" height="12" rx="3" class="bar-acc"/><text x="268" y="16" text-anchor="start" class="sm">Opus 4.7 + adaptive thinking</text><line x1="150" y1="34" x2="150" y2="156" class="grid"/><text x="150" y="174" text-anchor="middle" class="sm">0</text><line x1="278" y1="34" x2="278" y2="156" class="grid"/><text x="278" y="174" text-anchor="middle" class="sm">1×</text><line x1="406" y1="34" x2="406" y2="156" class="grid"/><text x="406" y="174" text-anchor="middle" class="sm">2×</text><line x1="534" y1="34" x2="534" y2="156" class="grid"/><text x="534" y="174" text-anchor="middle" class="sm">3×</text><text x="10" y="65" text-anchor="start">Tokens</text><path d="M150,40 h124.0 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-124.0 z" class="bar-ref"><title>Tokens, Opus 4.7: reference (1×)</title></path><text x="286" y="54" text-anchor="start" class="sm">1×</text><path d="M150,62 h380.0 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-380.0 z" class="bar-acc"><title>Tokens, with adaptive thinking: about 3×</title></path><text x="542" y="76" text-anchor="start" class="sm">~3×</text><text x="10" y="135" text-anchor="start">Latency</text><path d="M150,110 h124.0 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-124.0 z" class="bar-ref"><title>Latency, Opus 4.7: reference (1×)</title></path><text x="286" y="124" text-anchor="start" class="sm">1×</text><path d="M150,132 h380.0 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-380.0 z" class="bar-acc"><title>Latency, with adaptive thinking: about 3× (~100 s)</title></path><text x="542" y="146" text-anchor="start" class="sm">~3×</text></svg><figcaption>Indexed to Opus 4.7 without thinking = 1×. She gave ratios, not raw counts. Hover a bar for its value.</figcaption></figure>
+    <blockquote><p>"We're tripling essentially in the number of tokens that we're using here, and we're tripling the latency."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Add token and latency columns to your <a href="#g-eval" class="gl" data-term="Eval">eval</a> report next to the pass rate.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-23">
+  <summary>
+    <span class="num">23</span>
+    <div>
+      <p class="sum-lead">Tell the model to check its work, but watch the output limit.</p>
+      <p class="sum-text">A better prompt helped the smaller model. But the extra reasoning used up its output tokens.</p>
+      <p class="hint">Details · quotes · next step · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Better prompts can cost more tokens</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1719s">Watch at 28:39</a>
+    <p><strong>The change.</strong> Sonnet 4.6 got guidance on how to reason through the problem. Most important, it was told to check its work before answering.</p>
+    <p><strong>The result.</strong> Two of five cases passed. The failures weren't rule violations. The model ran out of <a href="#g-max-tokens-output-limit" class="gl" data-term="Max tokens / output limit">output tokens</a> before it finished.</p>
+    <p><strong>Raising max tokens isn't free.</strong> It would probably fix the failures, but use even more tokens and time. She ruled it out.</p>
+    <blockquote><p>"most critically telling it to check its work before outputting it."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"the model hasn't been able to finish the tasks within the output limit that we set."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>When a case fails, check the stop reason. Running out of tokens is a different problem from a wrong answer.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-24">
+  <summary>
+    <span class="num">24</span>
+    <div>
+      <p class="sum-lead">Split the job into generate, evaluate and repair.</p>
+      <p class="sum-text">Three simple prompts in a loop beat one big prompt. Each step does one job.</p>
+      <p class="hint">Details · steps · quotes · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Three small prompts beat one big one</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1798s">Watch at 29:58</a>
+    <ol>
+      <li><strong>Generate:</strong> write a first draft of the schedule.</li>
+      <li><strong>Evaluate:</strong> a separate prompt checks every rule and reports each violation with evidence.</li>
+      <li><strong>Repair:</strong> a third prompt takes the violations and makes targeted fixes.</li>
+    </ol>
+    <p><strong>The result.</strong> Every case passed. It used fewer tokens and had lower latency than the better-prompt Sonnet run.</p>
+    <p><strong>Two finalists.</strong> Opus with <a href="#g-adaptive-thinking" class="gl" data-term="Adaptive thinking">adaptive thinking</a>, or this loop. She said she'd keep tuning the loop to make it more efficient.</p>
+    <p><strong>Note who does the checking.</strong> The evaluate step uses an LLM, not code.</p>
+        <figure class="fig"><svg viewBox="0 0 600 234" role="img" aria-label="Loop: generate a draft, evaluate it against every rule with an LLM, repair any violations and re-check, or output the final schedule when there are none."><rect x="10" y="86" width="130" height="56" rx="8" class="b-plain"/><text x="75.0" y="109.5" text-anchor="middle">Generate</text><text x="75.0" y="128.5" text-anchor="middle" class="sm">first draft</text><line x1="140" y1="114" x2="188" y2="114" class="ln" marker-end="url(#arr)"/><rect x="190" y="86" width="160" height="56" rx="8" class="b-plain"/><text x="270.0" y="109.5" text-anchor="middle">Evaluate</text><text x="270.0" y="128.5" text-anchor="middle" class="sm">LLM checks every rule</text><line x1="350" y1="100" x2="428" y2="50" class="ln-acc" marker-end="url(#arrA)"/><text x="392" y="62" text-anchor="end" class="sm">none</text><line x1="350" y1="128" x2="428" y2="170" class="ln" marker-end="url(#arr)"/><text x="396" y="140" text-anchor="start" class="sm">violations</text><rect x="430" y="20" width="160" height="56" rx="8" class="b-acc"/><text x="510.0" y="53.0" text-anchor="middle">Final schedule</text><rect x="430" y="150" width="160" height="56" rx="8" class="b-plain"/><text x="510.0" y="173.5" text-anchor="middle">Repair</text><text x="510.0" y="192.5" text-anchor="middle" class="sm">targeted fixes</text><path d="M430,192 C340,222 275,205 270,150" class="ln" marker-end="url(#arr)"/><text x="318" y="226" text-anchor="middle" class="sm">re-check</text></svg><figcaption>Three small prompts, each with one job.</figcaption></figure>
+    <blockquote><p>"So we have three very simple prompts but they're now running independently rather than trying to do everything in one large prompt."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"So not programmatically checking it but checking it with an LLM."</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Find one task where a single prompt both drafts and checks its work. Split it into two calls.</p></div>
+  </div>
+</details>
+
+<details class="idea" id="idea-25">
+  <summary>
+    <span class="num">25</span>
+    <div>
+      <p class="sum-lead">Use the evaluate step for soft constraints at runtime.</p>
+      <p class="sum-text">The checking prompt can take one-off preferences in plain language. No code change needed.</p>
+      <p class="hint">Details · examples · quotes · next step · diagram · timestamp</p>
+    </div>
+    <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg>
+  </summary>
+  <div class="body">
+    <h3>Plain-language rules, added per request</h3>
+    <a class="ts" href="https://www.youtube.com/watch?v=G2B0YWuJUgI&amp;t=1895s">Watch at 31:35</a>
+    <p><strong>The benefit.</strong> You can give the evaluate prompt <a href="#g-hard-vs-soft-constraints" class="gl" data-term="Hard vs. soft constraints">soft requirements</a> each time you run it. Her examples:</p>
+    <ul>
+      <li>Harry doesn't like working with Sally, so separate them where possible.</li>
+      <li>We need a third shift on Wednesday.</li>
+    </ul>
+    <p><strong>Why it matters.</strong> Hard rules stay in the <a href="#g-programmatic-grader" class="gl" data-term="Programmatic grader">Python checker</a>. One-off preferences go in the prompt, so you don't keep editing code.</p>
+        <figure class="fig"><svg viewBox="0 0 600 200" role="img" aria-label="Hard rules go to a Python grader; soft preferences go to the evaluate prompt in the loop; both shape the final schedule."><rect x="10" y="20" width="200" height="64" rx="8" class="b-plain"/><text x="110.0" y="47.5" text-anchor="middle">Hard rules</text><text x="110.0" y="66.5" text-anchor="middle" class="sm">fixed for every run</text><rect x="10" y="118" width="200" height="72" rx="8" class="b-acc"/><text x="110.0" y="149.5" text-anchor="middle">Soft preferences</text><text x="110.0" y="168.5" text-anchor="middle" class="sm">plain text, per request</text><line x1="210" y1="52" x2="258" y2="52" class="ln" marker-end="url(#arr)"/><line x1="210" y1="154" x2="258" y2="154" class="ln-acc" marker-end="url(#arrA)"/><rect x="260" y="20" width="160" height="64" rx="8" class="b-plain"/><text x="340.0" y="47.5" text-anchor="middle">Python grader</text><text x="340.0" y="66.5" text-anchor="middle" class="sm">code, rarely changes</text><rect x="260" y="118" width="160" height="72" rx="8" class="b-acc"/><text x="340.0" y="149.5" text-anchor="middle">Evaluate prompt</text><text x="340.0" y="168.5" text-anchor="middle" class="sm">inside the loop</text><line x1="420" y1="52" x2="458" y2="90" class="ln" marker-end="url(#arr)"/><line x1="420" y1="154" x2="458" y2="116" class="ln-acc" marker-end="url(#arrA)"/><rect x="460" y="72" width="130" height="62" rx="8" class="b-plain"/><text x="525.0" y="98.5" text-anchor="middle">Schedule</text><text x="525.0" y="117.5" text-anchor="middle" class="sm">meets both</text></svg><figcaption>Example soft preference: “Harry doesn’t like working with Sally.” No code change needed.</figcaption></figure>
+    <blockquote><p>"you can put in soft requirements at runtime."</p><cite>— Margot van Laar</cite></blockquote>
+    <blockquote><p>"So it means that you're not having to make changes to the Python function which is doing the evaluation in the back end every time"</p><cite>— Margot van Laar</cite></blockquote>
+    <div class="todo"><span class="label">What to do with this</span><p>Keep hard rules in code. Pass soft preferences to the evaluate step as text.</p></div>
+  </div>
+</details>
+
+<!-- ============ APPENDIX ============ -->
+<section class="tools" aria-label="Tools">
+<details class="appendix" id="symptoms">
+  <summary>Debug by symptom <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg></summary>
+  <div class="panel-body">
+    <p class="panel-sub">Start from what you see. Jump to the idea that fixes it.</p>
+    <label class="sr" for="symFilter">Filter symptoms</label>
+    <input id="symFilter" class="field" type="search" placeholder="Filter, e.g. escalate, format, slow, math" autocomplete="off">
+    <div class="table-wrap"><table id="symTable">
+      <thead><tr><th>What you see</th><th>Likely cause</th><th>Go to</th></tr></thead>
+      <tbody><tr data-k="migration migrate new model regression upgrade"><td>Scores dropped after switching models</td><td>The new model behaves differently, or is less capable</td><td class="go"><a href="#idea-1" class="jump">1</a> <a href="#idea-11" class="jump">11</a></td></tr><tr data-k="deflect url link withhold hides refuses patch"><td>The bot points users elsewhere instead of answering from its context</td><td>An old defensive rule it now follows too strictly</td><td class="go"><a href="#idea-11" class="jump">11</a> <a href="#idea-12" class="jump">12</a> <a href="#idea-13" class="jump">13</a></td></tr><tr data-k="math calculation proration billing numbers tool"><td>Answers with numbers are vague or wrong</td><td>It&#x27;s doing mental math; it has no <a href="#g-tool-tool-schema" class="gl" data-term="Tool / tool schema">tool</a></td><td class="go"><a href="#idea-15" class="jump">15</a></td></tr><tr data-k="escalate escalation handoff human transfer specialist"><td>It won&#x27;t hand off to a human when it should</td><td>The prompt gives the cost of acting but not of not acting</td><td class="go"><a href="#idea-16" class="jump">16</a> <a href="#idea-17" class="jump">17</a></td></tr><tr data-k="conflict contradiction expected"><td>The prompt and the <a href="#g-eval" class="gl" data-term="Eval">eval</a> want different things</td><td>Conflicting instructions; the prompt usually wins</td><td class="go"><a href="#idea-17" class="jump">17</a></td></tr><tr data-k="format json xml parse parsing schema"><td>Output format is inconsistent or breaks parsing</td><td>No <a href="#g-output-contract" class="gl" data-term="Output contract">output contract</a>, or nothing enforces it</td><td class="go"><a href="#idea-8" class="jump">8</a> <a href="#idea-9" class="jump">9</a></td></tr><tr data-k="flaky random noise variance"><td>One case flips between pass and fail across runs</td><td>Normal run-to-run <a href="#g-variance" class="gl" data-term="Variance">variance</a></td><td class="go"><a href="#idea-4" class="jump">4</a></td></tr><tr data-k="regression flaky"><td>A fix helped most cases but broke one</td><td>Variance, or several changes at once</td><td class="go"><a href="#idea-4" class="jump">4</a> <a href="#idea-10" class="jump">10</a></td></tr><tr data-k="messy structure cleanup xml tags long"><td>The prompt is a jumble of policy, tone and <a href="#g-patch" class="gl" data-term="Patch">patches</a></td><td>No structure; leftover junk content</td><td class="go"><a href="#idea-5" class="jump">5</a> <a href="#idea-6" class="jump">6</a> <a href="#idea-7" class="jump">7</a></td></tr><tr data-k="constraints violations reasoning thinking"><td>It still breaks <a href="#g-hard-vs-soft-constraints" class="gl" data-term="Hard vs. soft constraints">hard rules</a> with a stronger model</td><td>Not enough reasoning, or one prompt doing too much</td><td class="go"><a href="#idea-20" class="jump">20</a> <a href="#idea-21" class="jump">21</a> <a href="#idea-24" class="jump">24</a></td></tr><tr data-k="slow latency cost tokens expensive"><td>It passes, but it&#x27;s too slow or costly</td><td>You&#x27;re only scoring pass rate</td><td class="go"><a href="#idea-22" class="jump">22</a> <a href="#idea-24" class="jump">24</a></td></tr><tr data-k="truncated cut off max tokens limit"><td>Responses stop before they finish</td><td>It hit the <a href="#g-max-tokens-output-limit" class="gl" data-term="Max tokens / output limit">output token limit</a></td><td class="go"><a href="#idea-23" class="jump">23</a></td></tr><tr data-k="soft constraints runtime preferences"><td>You need per-request preferences without code changes</td><td>Hard and soft rules live in the same place</td><td class="go"><a href="#idea-25" class="jump">25</a></td></tr></tbody>
+    </table></div>
+    <p class="note" id="symEmpty" hidden>No match. Try a broader word.</p>
+    <p class="note">These cover the failures she demoed. Links open the idea and scroll to it.</p>
+  </div>
+</details>
+
+<details class="appendix" id="audit">
+  <summary>Audit a prompt <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg></summary>
+  <div class="panel-body">
+    <p class="panel-sub">Paste a prompt. See the patterns the talk warns about.</p>
+    <label class="sr" for="auditInput">Prompt to audit</label>
+    <textarea id="auditInput" class="field mono" rows="9" spellcheck="false" placeholder="Paste a system prompt here…"></textarea>
+    <div class="btn-row">
+      <button type="button" class="btn btn-acc" id="auditRun">Audit</button>
+      <button type="button" class="btn" id="auditDemo">Load demo prompt</button>
+      <button type="button" class="btn" id="auditClear">Clear</button>
+    </div>
+    <p class="note">Runs in your browser; nothing is sent anywhere. It matches words and patterns, so expect some false alarms. Read each flag as "check this", not "this is wrong". The demo prompt is rebuilt from what she described, not her exact text.</p>
+    <div id="auditOut" aria-live="polite"></div>
+  </div>
+</details>
+</section>
+
+<details class="appendix" id="glossary" style="margin-top:1.5rem">
+  <summary>Glossary <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg></summary>
+  <div class="appendix-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Term</th><th>Meaning in this talk</th></tr></thead>
+      <tbody>
+        <tr id="g-eval"><td>Eval</td><td>A test case with an expected outcome, run against the model to score a prompt.</td></tr>
+        <tr id="g-eval-suite"><td>Eval suite</td><td>The full set of evals. Hers had five cases; real suites have many more.</td></tr>
+        <tr id="g-control-case"><td>Control case</td><td>An easy, clear-cut test that should always pass.</td></tr>
+        <tr id="g-edge-case"><td>Edge case</td><td>A test built from a past failure, to make sure it doesn't come back.</td></tr>
+        <tr id="g-regression"><td>Regression</td><td>A case that used to pass and now fails after a change.</td></tr>
+        <tr id="g-variance"><td>Variance</td><td>Natural run-to-run differences in model output, even with the same inputs.</td></tr>
+        <tr id="g-trial"><td>Trial</td><td>One run of a test case. The scheduler ran five trials per case.</td></tr>
+        <tr id="g-llm-judge"><td>LLM judge</td><td>A model that grades another model's answers against criteria.</td></tr>
+        <tr id="g-programmatic-grader"><td>Programmatic grader</td><td>Code (here, a Python function) that checks output against hard rules.</td></tr>
+        <tr id="g-prompt-hygiene"><td>Prompt hygiene</td><td>Basic cleanup: removing junk, adding structure, clarifying the role.</td></tr>
+        <tr id="g-xml-tags"><td>XML tags</td><td>Labels like &lt;policy&gt;…&lt;/policy&gt; that mark off sections of a prompt.</td></tr>
+        <tr id="g-output-contract"><td>Output contract</td><td>A section in the prompt that defines the exact format of the answer.</td></tr>
+        <tr id="g-harness"><td>Harness</td><td>The code and API settings around the model: tools, stop sequences, loops.</td></tr>
+        <tr id="g-stop-sequence"><td>Stop sequence</td><td>A string that makes the model stop writing when it appears in the output.</td></tr>
+        <tr id="g-structured-outputs"><td>Structured outputs</td><td>An API feature that forces the response to match a JSON schema.</td></tr>
+        <tr id="g-tool-tool-schema"><td>Tool / tool schema</td><td>A function the model can call, plus a description of what it does and when to use it.</td></tr>
+        <tr id="g-proration"><td>Proration</td><td>Charging part of a price when a plan changes mid-billing-cycle.</td></tr>
+        <tr id="g-grandfathered-legacy-plan"><td>Grandfathered (legacy) plan</td><td>An old plan a customer keeps after the company changes its offerings.</td></tr>
+        <tr id="g-escalation"><td>Escalation</td><td>Handing a conversation to a human specialist.</td></tr>
+        <tr id="g-patch"><td>Patch</td><td>A defensive instruction added to fix one model's misbehavior.</td></tr>
+        <tr id="g-overfitting-to-an-instruction"><td>Overfitting (to an instruction)</td><td>Following one rule so hard that it overrides better judgment.</td></tr>
+        <tr id="g-hallucination"><td>Hallucination</td><td>The model inventing facts or numbers.</td></tr>
+        <tr id="g-withholding"><td>Withholding</td><td>The model holding back information it has in its context.</td></tr>
+        <tr id="g-adaptive-thinking"><td>Adaptive thinking</td><td>An API mode where the model decides how much to reason for each request.</td></tr>
+        <tr id="g-max-tokens-output-limit"><td>Max tokens / output limit</td><td>The cap on how long a response can be. Hitting it cuts the answer off.</td></tr>
+        <tr id="g-generate-evaluate-repair-loop"><td>Generate–evaluate–repair loop</td><td>Three separate prompts that draft, check and fix an output in turn.</td></tr>
+        <tr id="g-hard-vs-soft-constraints"><td>Hard vs. soft constraints</td><td>Rules that must always hold, versus preferences that should hold where possible.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</details>
+
+<details class="appendix">
+  <summary>Sources <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 7.5l5 5 5-5"/></svg></summary>
+  <div class="appendix-body">
+    <ul class="sources">
+      <li><a href="https://www.youtube.com/watch?v=G2B0YWuJUgI">The prompting playbook (YouTube, Claude channel)</a></li>
+      <li><a href="https://claude.com/code-with-claude/session/ldn-the-prompting-playbook">Session page: Code with Claude London, 19 May 2026</a></li>
+      <li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">Claude prompting best practices</a></li>
+      <li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">Tool use</a></li>
+      <li><a href="https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons">Stop reasons and stop sequences</a></li>
+      <li><a href="https://platform.claude.com/docs/en/build-with-claude/structured-outputs">Structured outputs</a></li>
+      <li><a href="https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking">Adaptive thinking</a></li>
+      <li><a href="https://platform.claude.com/docs/en/about-claude/models/overview">Claude models overview (Sonnet 4.6, Opus 4.7)</a></li>
+    </ul>
+    <div class="note">
+      <p><strong>Transcript caveats.</strong> This summary comes from YouTube's auto-generated captions, without the slides. Quotes keep the caption wording, with only "um" and "uh" removed.</p>
+      <ul>
+        <li>The captions spell the speaker "Margot Vanlar". The session page spells it "Margot van Laar", which is used here.</li>
+        <li>"set 46" and "Sonet 46" are read as Sonnet 4.6. "Opus 47" is read as Opus 4.7.</li>
+        <li>"fast contract resolution" is probably "first contact resolution", a common support metric. The glossary avoids guessing.</li>
+        <li>"long band lists" is read as "long ban lists".</li>
+        <li>"grandfather's plan" means a grandfathered plan. "passing errors" means parsing errors.</li>
+        <li>Meridian Mobile is a fictional demo company. The demo web apps aren't public.</li>
+        <li>The opening welcome and closing thanks are left out. The session has no sponsor segments.</li>
+      </ul>
+    </div>
+  </div>
+</details>
+
+</main>
+<div class="back-pill" id="backPill" role="status" aria-live="polite">
+  <button type="button" id="backBtn">↩ Back to reading</button>
+  <button type="button" class="x" id="backX" aria-label="Dismiss">×</button>
+</div>
+<script>
+  (function () {
+    var ideas = Array.prototype.slice.call(document.querySelectorAll('details.idea'));
+    var counter = document.getElementById('counter');
+    function update() {
+      var open = ideas.filter(function (d) { return d.open; }).length;
+      counter.textContent = open + ' of ' + ideas.length + ' expanded';
+    }
+    ideas.forEach(function (d) { d.addEventListener('toggle', update); });
+    document.getElementById('expandAll').addEventListener('click', function () {
+      ideas.forEach(function (d) { d.open = true; }); update();
+    });
+    document.getElementById('collapseAll').addEventListener('click', function () {
+      ideas.forEach(function (d) { d.open = false; }); update();
+    });
+    update();
+  })();
+
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('themeToggle');
+    var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    function current() {
+      var t = root.getAttribute('data-theme');
+      if (t) return t;
+      return mq && mq.matches ? 'dark' : 'light';
+    }
+    function label() {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      var text = 'Switch to ' + next + ' mode';
+      btn.setAttribute('aria-label', text);
+      btn.setAttribute('title', text);
+    }
+    btn.addEventListener('click', function () {
+      var next = current() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('pp-theme', next); } catch (e) {}
+      label();
+    });
+    if (mq && mq.addEventListener) mq.addEventListener('change', label);
+    label();
+  })();
+
+  (function () {
+    /* jump links: open + scroll */
+    function openIdea(id, smooth) {
+      var d = document.getElementById(id);
+      if (!d || !d.classList.contains('idea')) return false;
+      d.open = true;
+      d.dispatchEvent(new Event('toggle'));
+      d.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+      d.classList.add('flash');
+      setTimeout(function () { d.classList.remove('flash'); }, 1600);
+      var s = d.querySelector('summary'); if (s) s.focus({ preventScroll: true });
+      return true;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href^="#idea-"]');
+      if (!a) return;
+      var id = a.getAttribute('href').slice(1);
+      if (openIdea(id, true)) {
+        e.preventDefault();
+        try { history.replaceState(null, '', '#' + id); } catch (err) { location.hash = id; }
+      }
+    });
+    function fromHash() { var h = location.hash.slice(1); if (/^idea-\d+$/.test(h)) openIdea(h, false); }
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
+
+    /* symptom filter */
+    var f = document.getElementById('symFilter');
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#symTable tbody tr'));
+    var empty = document.getElementById('symEmpty');
+    f.addEventListener('input', function () {
+      var q = f.value.trim().toLowerCase(), shown = 0;
+      rows.forEach(function (r) {
+        var hit = !q || (r.textContent + ' ' + (r.getAttribute('data-k') || '')).toLowerCase().indexOf(q) > -1;
+        r.hidden = !hit; if (hit) shown++;
+      });
+      empty.hidden = shown > 0;
+    });
+
+    /* prompt audit */
+    var DEMO = "You are a human customer care agent at Meridian Mobile. Be friendly and helpful.\nOur plans: Basic, 30 GB and Unlimited. [hero image] Unlimited includes 4 GB of hotspot data. Accept all cookies to continue.\nWe changed our plans recently and the policy doc shows the current plan data. Customers on grandfathered plans have different rates. Never give a customer the wrong plan details. Instead point them to the URL.\nDon't ever give a customer a vague answer. CRITICAL: always calculate any prorated amounts correctly.\nAvoid escalating or transferring to a care specialist unless absolutely necessary, as it costs approximately $8 and counts against our team's first contact resolution.\nCustomer account: {account}\nCustomer message: {message}";
+    var RULES = [
+      { id: 'identity', title: 'False claims about the bot', re: /\b(you are|you're)\s+(a\s+)?(real\s+)?(human|person)\b|\bnot an ai\b|\bpretend to be (a )?human\b/gi,
+        why: 'Untrue statements are noise the model has to work around. She removed "you are a human" first.', ideas: [6] },
+      { id: 'web', title: 'Pasted web leftovers', re: /\b(cookies?|hero image|click here|subscribe|newsletter|accept all|privacy policy|footer|navigation menu|sign up now)\b|©/gi,
+        why: 'Text copied from a website. Her giveaways were a hero image and cookies.', ideas: [6] },
+      { id: 'absolute', title: 'Absolute rules (never / always)', re: /\b(never|always|under no circumstances|don't ever|do not ever|at all times)\b/gi,
+        why: 'Newer models follow these closely. Check each is still needed, and say when it applies instead of banning outright.', ideas: [11, 14] },
+      { id: 'shout', title: 'Shouted emphasis', re: /\b(CRITICAL|IMPORTANT|MUST|NEVER|ALWAYS|MANDATORY)\b|!{2,}/g,
+        why: 'Emphasis doesn\'t add capability. If the line asks for a skill, give a tool or data instead.', ideas: [15] },
+      { id: 'quality', title: 'Asks for quality without giving the means', re: /\b(do a good job|be accurate|be careful|don't make mistakes|correctly|precisely|no vague answers?|vague answer)\b/gi,
+        why: 'Telling the model to do well doesn\'t make it able to. Look for the missing tool, data or step.', ideas: [15] },
+      { id: 'math', title: 'Calculations in the prompt', re: /\b(calculat\w*|comput\w*|prorat\w*|pro-rat\w*|percentage|percent|sum of|totals?|arithmetic|math)\b/gi,
+        why: 'Exact math belongs in a tool, not in the model\'s head.', ideas: [15] },
+      { id: 'onesided', title: 'One-sided cost of an action', re: /unless (it is |it's )?absolutely necessary|\bavoid (escalat\w*|transferr\w*|handing off|refund\w*)|\bcosts? (approximately |about |roughly |~)?\$\s?\d+|counts against/gi,
+        why: 'If you only give the cost of acting, the model stops acting. Add what it costs not to act.', ideas: [16, 17] },
+      { id: 'deflect', title: 'Sends the user elsewhere', re: /\b(point|refer|direct|send|redirect)\s+(them|the user|users|the customer|customers)\s+to\b|\b(check|visit) (the|their|your) (website|site|url|account page|account)\b/gi,
+        why: 'Fine as a fallback. As the default it can hide facts the model already has. Name the source of truth instead.', ideas: [12, 13] }
+    ];
+    var input = document.getElementById('auditInput');
+    var out = document.getElementById('auditOut');
+    function esc(t) { return t.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function links(ids) { return ids.map(function (n) { return '<a href="#idea-' + n + '" class="jump">' + n + '</a>'; }).join(' '); }
+    function card(title, why, ideas, items, ok) {
+      var h = '<div class="flag' + (ok ? ' ok' : '') + '"><h4>' + esc(title) + '</h4><p>' + esc(why) + '</p>';
+      if (items && items.length) h += '<ul>' + items.join('') + '</ul>';
+      h += '<span class="see">See idea ' + links(ideas) + '</span></div>';
+      return h;
+    }
+    function run() {
+      var text = input.value;
+      if (!text.trim()) { out.innerHTML = '<p class="note">Paste a prompt, or load the demo, then press Audit.</p>'; return; }
+      var lines = text.split(/\r?\n/);
+      var html = '', total = 0, cats = 0, absCount = 0;
+      RULES.forEach(function (r) {
+        var items = [];
+        lines.forEach(function (line, i) {
+          r.re.lastIndex = 0;
+          var hits = line.match(r.re);
+          if (!hits) return;
+          if (r.id === 'absolute') absCount += hits.length;
+          total += hits.length;
+          r.re.lastIndex = 0;
+          var marked = esc(line).replace(new RegExp(r.re.source, r.re.flags), function (m) { return '<mark>' + m + '</mark>'; });
+          items.push('<li><span class="ln">L' + (i + 1) + '</span>' + marked + '</li>');
+        });
+        if (items.length) { cats++; html += card(r.title, r.why, r.ideas, items.slice(0, 8)); }
+      });
+      if (absCount >= 6) { cats++; html += card('Long ban list', absCount + ' never/always rules. Her recap lists avoiding long ban lists among the fixes that helped.', [10, 11], null); }
+      if (!/<[a-z_][\w-]*>[\s\S]*?<\/[a-z_][\w-]*>/i.test(text)) {
+        cats++; html += card('No section tags', 'No XML-style sections found. If you can\'t tell role, policy, tone and data apart, the model can\'t either.', [7], null);
+      }
+      if (!/(output format|response format|respond (only )?(in|with)|format your|reply in|<response|<output|json|schema)/i.test(text)) {
+        cats++; html += card('No output contract', 'Nothing says what shape the answer should take. Add a format section, and enforce it in the API if you parse it.', [8, 9], null);
+      }
+      var longPara = text.split(/\n\s*\n/).some(function (p) { return p.split(/\s+/).length > 150; });
+      if (longPara) { cats++; html += card('Very long paragraph', 'A block of 150+ words. Split it into labeled sections.', [7], null); }
+      var sum = cats === 0
+        ? '<p class="audit-sum">No flags. Still run your evals — this only catches surface patterns.</p>'
+        : '<p class="audit-sum">' + cats + ' thing' + (cats === 1 ? '' : 's') + ' to check' + (total ? ' · ' + total + ' highlighted phrase' + (total === 1 ? '' : 's') : '') + '</p>';
+      out.innerHTML = sum + html;
+    }
+    document.getElementById('auditRun').addEventListener('click', run);
+    document.getElementById('auditDemo').addEventListener('click', function () { input.value = DEMO; run(); });
+    document.getElementById('auditClear').addEventListener('click', function () { input.value = ''; out.innerHTML = ''; input.focus(); });
+    input.addEventListener('keydown', function (e) { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') run(); });
+  })();
+
+  (function () {
+    var pill = document.getElementById('backPill');
+    var btn = document.getElementById('backBtn');
+    var x = document.getElementById('backX');
+    var glossary = document.getElementById('glossary');
+    var origin = null, armed = false, armTimer = null;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function flash(el) { el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }
+    function hide() { pill.classList.remove('show'); origin = null; armed = false; clearTimeout(armTimer); }
+    function originTop() {
+      var r = origin.link.getBoundingClientRect();
+      return window.scrollY + r.top - origin.offset;
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.gl');
+      if (!a) return;
+      var row = document.getElementById(a.getAttribute('href').slice(1));
+      if (!row) return;
+      e.preventDefault();
+      if (!origin) {
+        var idea = a.closest('details.idea');
+        var label = idea ? 'Back to idea ' + idea.id.replace('idea-', '') : 'Back to reading';
+        origin = { link: a, offset: a.getBoundingClientRect().top, label: label };
+        btn.textContent = '↩ ' + label;
+      }
+      glossary.open = true;
+      row.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+      flash(row);
+      pill.classList.add('show');
+      armed = false; clearTimeout(armTimer);
+      armTimer = setTimeout(function () { armed = true; }, 1200);
+    });
+    btn.addEventListener('click', function () {
+      if (!origin) return hide();
+      var link = origin.link;
+      var d = link.closest('details'); if (d && !d.open) d.open = true;
+      window.scrollTo({ top: originTop(), behavior: reduce ? 'auto' : 'smooth' });
+      flash(link);
+      try { link.focus({ preventScroll: true }); } catch (err) {}
+      hide();
+    });
+    x.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && pill.classList.contains('show')) hide(); });
+    window.addEventListener('scroll', function () {
+      if (!origin || !armed) return;
+      if (Math.abs(window.scrollY - originTop()) < 140) hide();
+    }, { passive: true });
+  })();
+</script>
+</body>
+</html>
